@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<feed xmlns="http://www.w3.org/2005/Atom"> <title>All things Common Lisp</title> <link href=""/> <link type="application/atom+xml" rel="self" href="/atom.xml"/> <updated>Tue, 14 Apr 2020 17:12:01 +0000</updated> <author> <name>Nikolai Matiushev</name> </author> <entry> <link type="text/html" rel="alternate" href="/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html"/> <title>Semantic HTML theme for Coleslaw with LASS and CLASSIE</title> <published>2020-04-14 15:09:43</published> <updated>2020-04-14 15:09:43</updated> <author> <name>Nikolai Matiushev</name> <uri></uri> </author> <content type="html">&lt;!-- **** your post here (remove this line) **** --&gt;
+
+&lt;!-- format: could be &#039;html&#039; (for raw html) or &#039;md&#039; (for markdown).  --&gt;
+
+&lt;p&gt;Here is my content.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Excerpt separator can also be extracted from content.
+Add &lt;code&gt;excerpt: &amp;lt;string&amp;gt;&lt;/code&gt; to the above metadata.
+Excerpt separator is &lt;code&gt;&amp;lt;!--more--&amp;gt;&lt;/code&gt; by default.&lt;/p&gt;
+</content> </entry><entry> <link type="text/html" rel="alternate" href="/posts/Serve-static-site-with-clack-in-few-lines.html"/> <title>Serve static site with clack in few lines</title> <published>2020-04-14 15:08:40</published> <updated>2020-04-14 15:08:40</updated> <author> <name>Nikolai Matiushev</name> <uri></uri> </author> <content type="html">&lt;p&gt;While working on this blog I&#039;ve stumbled on a basic need to serve static website from local folder.&lt;/p&gt;
+
+&lt;p&gt;There are numerous solutions in any language but we&#039;re talking CL here. And it&#039;s surprisingly simple:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Install &lt;code&gt;clack&lt;/code&gt; with &lt;code&gt;ros install clack&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Create &lt;code&gt;app.lisp&lt;/code&gt; in the target folder with the following content: &lt;code&gt;(lack.app.file:make-app)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;clackup -s lack-middleware-static app.lisp&lt;/code&gt; and enjoy.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;!--more--&gt;
+
+&lt;pre&gt;&lt;code&gt;To load &quot;lack-middleware-static&quot;:
+  Load 1 ASDF system:
+    lack-middleware-static
+; Loading &quot;lack-middleware-static&quot;
+
+Hunchentoot server is going to start.
+Listening on 127.0.0.1:5000.&lt;/code&gt;&lt;/pre&gt;
+</content> </entry><entry> <link type="text/html" rel="alternate" href="/posts/Minimal-Lisp-setup-using-lem.html"/> <title>Minimal Lisp setup using lem</title> <published>2020-04-14 15:07:43</published> <updated>2020-04-14 15:07:43</updated> <author> <name>Nikolai Matiushev</name> <uri></uri> </author> <content type="html">&lt;p&gt;This is a set of instructions to quickly setup Common Lisp development environment on Linux using &lt;a href=&quot;https://github.com/cxxxr/lem&quot; &gt;Lem editor&lt;/a&gt;&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Install &lt;code&gt;roswell&lt;/code&gt;, see &lt;a href=&quot;https://github.com/roswell/roswell#installation-dependency--usage&quot; &gt;instructions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ros install fukamachi/qlot&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ros install fukamachi/cl-project&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ros intall cxxxr/lem&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Modify .bashrc / .profile to include &lt;code&gt;export PATH=&amp;quot;$PATH:$HOME/.roswell/bin&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Create project using &lt;code&gt;make-project&lt;/code&gt; following the example provided&lt;/li&gt;
+&lt;li&gt;Start &lt;code&gt;lem&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Open file &lt;code&gt;&amp;lt;project&amp;gt;/qlfile&lt;/code&gt; and add dependencies&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;M-x change-directory&lt;/code&gt; to &lt;code&gt;&amp;lt;project&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;C-u M-x slime&lt;/code&gt;  -&amp;gt; type &#039;qlot/&#039; and Tab to select CL implementation&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;(ql:quickload :&amp;lt;project&amp;gt;)&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;PROFIT&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</content> </entry><entry> <link type="text/html" rel="alternate" href="/posts/Running-McCLIM-and-other-Lisp-packages-on-Windows.html"/> <title>Running McCLIM and other Lisp packages on Windows</title> <published>2020-04-14 15:03:27</published> <updated>2020-04-14 15:03:27</updated> <author> <name>Nikolai Matiushev</name> <uri></uri> </author> <content type="html">&lt;p&gt;McCLIM is an amazing project and a treasure trove of useful utils like CLOUSEAU. Unfortunatelly currently McCLIM has no backend for Windows. I&#039;d like to use McCLIM and experiment with developing a backend.&lt;/p&gt;
+
+&lt;p&gt;Windows is quite hostile environment for mostly Unix-based Lisp packages. And McCLIM is not an exception. It uses CLX as a backend library and depends on STATIC-VECTORS - package that require CFFI-GROVELER to dynamically compile C program on system load.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h2&gt;Lisp (SBCL) setup for Windows&lt;/h2&gt;
+
+&lt;h3&gt;Roswell&lt;/h3&gt;
+
+&lt;p&gt;I&#039;m using &lt;a href=&quot;https://github.com/roswell/roswell&quot; &gt;Roswell&lt;/a&gt; to manage Lisp implementations and local projects. &lt;/p&gt;
+
+&lt;h4&gt;Setup MSYS&lt;/h4&gt;
+
+&lt;p&gt;This part of loosely based on Portacle build instructions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Install &lt;a href=&quot;https://www.msys2.org/&quot; &gt;MSYS2&lt;/a&gt;. Please use default installation path. It will save you lots of time.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;7Zip, download, install, add it to Windows PATH &lt;a href=&quot;http://www.7-zip.org/&quot; &gt;http://www.7-zip.org&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Open the MSYS shell and run &lt;code&gt;pacman -Sy pacman&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Reopen the shell and run &lt;code&gt;pacman -Syu&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Install packages:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;pacman -S unzip git gpg curl base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-xpm-nox mingw-w64-x86_64-pcre mingw-w64-x86_64-curl mingw-w64-x86_64-gnutls mingw-w64-x86_64-iconv mingw-w64-x86_64-libgcrypt mingw-w64-x86_64-glfw&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Launch the MinGW64 shell and use it for further steps&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4&gt;Install roswell&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Follow &lt;a href=&quot;https://github.com/roswell/roswell/wiki/Installation#building-from-source&quot; &gt;https://github.com/roswell/roswell/wiki/Installation#building-from-source&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;In my case I&#039;ve used &lt;code&gt;./configure --prefix=/c/opt/roswell &amp;amp; make &amp;amp; make install&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Add &lt;code&gt;roswell/bin&lt;/code&gt; and &lt;code&gt;$HOME/.roswell/bin&lt;/code&gt; folders to your Windows and Mingw64 &lt;code&gt;PATH&lt;/code&gt; environment variables.&lt;/li&gt;
+&lt;li&gt;Run &lt;code&gt;ros&lt;/code&gt; for initial setup&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4&gt;Build latest SBCL&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Install latest SBCL &lt;code&gt;ros install sbcl/2.0.3&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Switch to that version &lt;code&gt;ros use sbcl/2.0.3&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4&gt;Configure Sly&lt;/h4&gt;
+
+&lt;p&gt;I&#039;m using Sly but Slime setup roughly the same.
+Please note the hacky way of running &lt;code&gt;ros&lt;/code&gt; in Mingw64 shell.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Start a bare shell without fancy terminal emulator window as that&#039;s what Emacs expects &lt;code&gt;-defterm -no-start&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;ros -L sbcl&lt;/code&gt; selects our freshly built SBCL version. Please refer to &lt;code&gt;roswell&lt;/code&gt; documentation on managing Lisp implementations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;DISPLAY=localhost:0&lt;/code&gt; is the usual X Server display environment variable. This is needed for McCLIM to run and obviously requires that X Server program is up an running on display :0.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;&lt;span class=&quot;code&quot;&gt;&lt;span class=&quot;paren1&quot;&gt;(&lt;span class=&quot;code&quot;&gt;set-language-environment &lt;span class=&quot;string&quot;&gt;&quot;UTF-8&quot;&lt;/span&gt;&lt;/span&gt;)&lt;/span&gt;
+&lt;span class=&quot;paren1&quot;&gt;(&lt;span class=&quot;code&quot;&gt;&lt;a href=&quot;http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_559.html#IDX2046&quot; class=&quot;symbol&quot;&gt;set-terminal-coding-system&lt;/a&gt; &#039;utf-8&lt;/span&gt;)&lt;/span&gt;
+    
+&lt;span class=&quot;paren1&quot;&gt;(&lt;span class=&quot;code&quot;&gt;use-package sly
+             &lt;span class=&quot;keyword&quot;&gt;:ensure&lt;/span&gt; &lt;a href=&quot;http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_266.html#IDX704&quot; class=&quot;symbol&quot;&gt;t&lt;/a&gt;
+             &lt;span class=&quot;keyword&quot;&gt;:init&lt;/span&gt;
+             &lt;span class=&quot;paren2&quot;&gt;(&lt;span class=&quot;code&quot;&gt;&lt;a href=&quot;http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_372.html#IDX1137&quot; class=&quot;symbol&quot;&gt;remove-hook&lt;/a&gt; &#039;lisp-mode-hook &#039;slime-lisp-mode-hook&lt;/span&gt;)&lt;/span&gt;
+             &lt;span class=&quot;keyword&quot;&gt;:config&lt;/span&gt;
+             &lt;span class=&quot;paren2&quot;&gt;(&lt;span class=&quot;code&quot;&gt;&lt;a href=&quot;http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_146.html#IDX436&quot; class=&quot;symbol&quot;&gt;&lt;i&gt;&lt;span class=&quot;symbol&quot;&gt;setq&lt;/span&gt;&lt;/i&gt;&lt;/a&gt; sly-net-coding-system &#039;utf-8-unix&lt;/span&gt;)&lt;/span&gt;
+             &lt;span class=&quot;paren2&quot;&gt;(&lt;span class=&quot;code&quot;&gt;&lt;a href=&quot;http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_146.html#IDX436&quot; class=&quot;symbol&quot;&gt;&lt;i&gt;&lt;span class=&quot;symbol&quot;&gt;setq&lt;/span&gt;&lt;/i&gt;&lt;/a&gt; sly-lisp-implementations
+                   `&lt;span class=&quot;paren3&quot;&gt;(&lt;span class=&quot;code&quot;&gt;&lt;span class=&quot;paren4&quot;&gt;(&lt;span class=&quot;code&quot;&gt;sbcl &lt;span class=&quot;paren5&quot;&gt;(&lt;span class=&quot;code&quot;&gt;&lt;span class=&quot;string&quot;&gt;&quot;c:/msys64/msys2_shell.cmd&quot;&lt;/span&gt;  &lt;span class=&quot;string&quot;&gt;&quot;-defterm&quot;&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;-mingw64&quot;&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;-no-start&quot;&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;-c&quot;&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;DISPLAY=localhost:0 ros -L sbcl -Q run&quot;&lt;/span&gt;&lt;/span&gt;)&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;:coding-system&lt;/span&gt; utf-8-unix&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4&gt;Running McCLIM&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Precache fonts
+
+&lt;ul&gt;
+&lt;li&gt;In &lt;code&gt;Mingw64&lt;/code&gt; terminal run &lt;code&gt;fc-cache /c/Windows/Fonts&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add this command to &lt;code&gt;~/.bashrc&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Ensure X Server is running&lt;/li&gt;
+&lt;li&gt;Run McCLIM as usual&lt;/li&gt;
+&lt;/ul&gt;
+</content> </entry> </feed>

@@ -1,0 +1,97 @@
+<!doctype html>
+<html> <head> <title>All things Common Lisp</title> <meta charset="utf-8"> <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> <meta http-equiv="content-type" content="text/html;" charset="UTF-8" /> <meta name="viewport" content="width=device-width, initial-scale=1"> <link href="https://unpkg.com/sanitize.css" rel="stylesheet" /> <link href= "/css/style.css" rel="stylesheet" type="text/css" /> <link rel="alternate" href="/rss.xml" type="application/rss+xml" />  </head> <body> <header> <nav role="navigation"> <ul> <li> <a href="https://egao1980.github.io/cl-blog/">Home</a> </li><li> <a href="http://twitter.com/NickMatyushev">Twitter</a> </li><li> <a href="http://github.com/egao1980">Code</a> </li> </ul> </nav> <h1><a href="">All things Common Lisp</a></li></h1> </header> <main> <article>
+<header>
+<h1>Running McCLIM and other Lisp packages on Windows</h1>
+<div class="tags">
+Tagged as <a href="/tag/windows.html">windows</a>, <a href="/tag/mcclim.html">mcclim</a>, <a href="/tag/hacks.html">hacks</a>, <a href="/tag/tips.html">tips</a>, <a href="/tag/mingw64.html">mingw64</a>, <a href="/tag/roswell.html">roswell</a>, <a href="/tag/emacs.html">emacs</a>, <a href="/tag/sly.html">sly</a> </div>
+Written on <time>
+2020-04-14 15:03:27 </time>
+</header>
+<div> <p>McCLIM is an amazing project and a treasure trove of useful utils like CLOUSEAU. Unfortunatelly currently McCLIM has no backend for Windows. I'd like to use McCLIM and experiment with developing a backend.</p>
+
+<p>Windows is quite hostile environment for mostly Unix-based Lisp packages. And McCLIM is not an exception. It uses CLX as a backend library and depends on STATIC-VECTORS - package that require CFFI-GROVELER to dynamically compile C program on system load.</p>
+
+<!--more-->
+
+<h2>Lisp (SBCL) setup for Windows</h2>
+
+<h3>Roswell</h3>
+
+<p>I'm using <a href="https://github.com/roswell/roswell" >Roswell</a> to manage Lisp implementations and local projects. </p>
+
+<h4>Setup MSYS</h4>
+
+<p>This part of loosely based on Portacle build instructions:</p>
+
+<ul>
+<li><p>Install <a href="https://www.msys2.org/" >MSYS2</a>. Please use default installation path. It will save you lots of time.</p></li>
+<li><p>7Zip, download, install, add it to Windows PATH <a href="http://www.7-zip.org/" >http://www.7-zip.org</a></p></li>
+<li><p>Open the MSYS shell and run <code>pacman -Sy pacman</code></p></li>
+<li><p>Reopen the shell and run <code>pacman -Syu</code></p></li>
+<li><p>Install packages:</p></li>
+</ul>
+
+<pre><code>pacman -S unzip git gpg curl base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-xpm-nox mingw-w64-x86_64-pcre mingw-w64-x86_64-curl mingw-w64-x86_64-gnutls mingw-w64-x86_64-iconv mingw-w64-x86_64-libgcrypt mingw-w64-x86_64-glfw</code></pre>
+
+<ul>
+<li>Launch the MinGW64 shell and use it for further steps</li>
+</ul>
+
+<h4>Install roswell</h4>
+
+<ul>
+<li>Follow <a href="https://github.com/roswell/roswell/wiki/Installation#building-from-source" >https://github.com/roswell/roswell/wiki/Installation#building-from-source</a>.</li>
+<li>In my case I've used <code>./configure --prefix=/c/opt/roswell &amp; make &amp; make install</code>.</li>
+<li>Add <code>roswell/bin</code> and <code>$HOME/.roswell/bin</code> folders to your Windows and Mingw64 <code>PATH</code> environment variables.</li>
+<li>Run <code>ros</code> for initial setup</li>
+</ul>
+
+<h4>Build latest SBCL</h4>
+
+<ul>
+<li>Install latest SBCL <code>ros install sbcl/2.0.3</code></li>
+<li>Switch to that version <code>ros use sbcl/2.0.3</code></li>
+</ul>
+
+<h4>Configure Sly</h4>
+
+<p>I'm using Sly but Slime setup roughly the same.
+Please note the hacky way of running <code>ros</code> in Mingw64 shell.</p>
+
+<ul>
+<li><p>Start a bare shell without fancy terminal emulator window as that's what Emacs expects <code>-defterm -no-start</code>.</p></li>
+<li><p><code>ros -L sbcl</code> selects our freshly built SBCL version. Please refer to <code>roswell</code> documentation on managing Lisp implementations.</p></li>
+<li><p><code>DISPLAY=localhost:0</code> is the usual X Server display environment variable. This is needed for McCLIM to run and obviously requires that X Server program is up an running on display :0.</p></li>
+</ul>
+
+<pre><code><span class="code"><span class="paren1">(<span class="code">set-language-environment <span class="string">"UTF-8"</span></span>)</span>
+<span class="paren1">(<span class="code"><a href="http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_559.html#IDX2046" class="symbol">set-terminal-coding-system</a> 'utf-8</span>)</span>
+    
+<span class="paren1">(<span class="code">use-package sly
+             <span class="keyword">:ensure</span> <a href="http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_266.html#IDX704" class="symbol">t</a>
+             <span class="keyword">:init</span>
+             <span class="paren2">(<span class="code"><a href="http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_372.html#IDX1137" class="symbol">remove-hook</a> 'lisp-mode-hook 'slime-lisp-mode-hook</span>)</span>
+             <span class="keyword">:config</span>
+             <span class="paren2">(<span class="code"><a href="http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_146.html#IDX436" class="symbol"><i><span class="symbol">setq</span></i></a> sly-net-coding-system 'utf-8-unix</span>)</span>
+             <span class="paren2">(<span class="code"><a href="http://www.gnu.org/software/emacs/elisp-manual/html_node/elisp_146.html#IDX436" class="symbol"><i><span class="symbol">setq</span></i></a> sly-lisp-implementations
+                   `<span class="paren3">(<span class="code"><span class="paren4">(<span class="code">sbcl <span class="paren5">(<span class="code"><span class="string">"c:/msys64/msys2_shell.cmd"</span>  <span class="string">"-defterm"</span> <span class="string">"-mingw64"</span> <span class="string">"-no-start"</span> <span class="string">"-c"</span> <span class="string">"DISPLAY=localhost:0 ros -L sbcl -Q run"</span></span>)</span> <span class="keyword">:coding-system</span> utf-8-unix</span>)</span></span>)</span></span>)</span></span>)</span></span></code></pre>
+
+<h4>Running McCLIM</h4>
+
+<ul>
+<li>Precache fonts
+
+<ul>
+<li>In <code>Mingw64</code> terminal run <code>fc-cache /c/Windows/Fonts</code></li>
+<li>Add this command to <code>~/.bashrc</code></li>
+</ul></li>
+<li>Ensure X Server is running</li>
+<li>Run McCLIM as usual</li>
+</ul>
+ </div> <footer> <nav role="navigation">
+<ul> 
+<li><a href="/posts/Minimal-Lisp-setup-using-lem.html">Next</a><br></li>
+</ul> </nav>
+</footer>
+</article>
+ </main>  <footer> Unless otherwise credited all material <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"> <img alt="Creative Commons License" style="border-width:0" src="/css/cc-by-sa.png" /> </a> by Nikolai Matiushev <a id="coleslaw-logo" href="https://github.com/redline6561/coleslaw"> <img src="/css/logo_small.jpg" alt="Coleslaw logo" /> </a> </footer> </body> </html>

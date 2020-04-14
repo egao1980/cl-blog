@@ -1,7 +1,7 @@
 ;;; -*- mode : lisp -*-
 (;; Required information
  :author "Nikolai Matiushev"                         ;; to be placed on post pages and in the copyright/CC-BY-SA notice
- :deploy-dir "deploy/"                ;; for Coleslaw's generated HTML to go in
+ :deploy-dir "docs/"                ;; for Coleslaw's generated HTML to go in
  :domain ""                           ;; to generate absolute links to the site content. Note: with :cname option of gh-pages, this requires a url scheme, e.g. https://fake.org
  :routing (
            (:post           "posts/~a") ;; to determine the URL scheme of content on the site
@@ -20,18 +20,14 @@
            (sitemap)
            (static-pages)
            ;; deployment plugins
-           ;; deployment to github pages
-           (gh-pages :url "git@github.com:egao1980/cl-blog.git"
-                     :branch "gh-pages"
-                     :remote "origin"
-                     :cname t)
+           ;; deployment to github page
            ;; versioned deployment. Remove comment to enable symlinked, timestamped deploys.
                                         ; (versioned)
            ;; default deploy method is rsync
-           (rsync "-avz" "--delete" "--exclude" ".git/" "--exclude" ".gitignore" "--copy-links")
+           (robocopy "/MIR" "/IS" "/XD" ".git" "/XF" ".gitignore" "/SL")
            )
- :sitenav ((:url "http://egao1980.github.io/cl-blog" :name "Home")
-           (:url "http://twitter.com/egao1980" :name "Twitter")
+ :sitenav ((:url "https://egao1980.github.io/cl-blog/" :name "Home")
+           (:url "http://twitter.com/NickMatyushev" :name "Twitter")
            (:url "http://github.com/egao1980" :name "Code"))
  :staging-dir "c:/tmp/coleslaw/"  ;; for Coleslaw to do intermediate work, default: "/tmp/coleslaw"
  )
