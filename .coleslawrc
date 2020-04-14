@@ -11,7 +11,7 @@
            (:feed           "~a.xml")
            (:tag-feed       "tag/~a.xml"))
  :title "All things Common Lisp" ;; a site title
- :theme "engels"                        ;; to select one of the themes in "coleslaw/themes/"
+ :theme "brutal"                        ;; to select one of the themes in "coleslaw/themes/"
  ;; Optional information
  :excerpt-sep "<!--more-->"           ;; to set the separator for excerpt in content
  :feeds ("lisp")
