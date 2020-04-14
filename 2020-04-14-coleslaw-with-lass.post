@@ -42,7 +42,7 @@ Edit and compile `.lass` file with bells and whistles:
 (add-to-list 'auto-mode-alist '("\\.lass\\'" . lass-mode))
 
 (provide 'lass)
-````
+```
 
 ### Theme details
 
