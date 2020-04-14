@@ -5,13 +5,50 @@ date: 2020-04-14 15:09:43
 format: md
 ;;;;;
 
-<!-- **** your post here (remove this line) **** -->
-<!-- format: could be 'html' (for raw html) or 'md' (for markdown).  -->
+I've recently was facinated by Shinmera's [LASS](https://github.com/Shinmera/LASS) - a system to generate CSS in a way similar to SCSS / LESS but in a Common Lisp way.
+I've compiled a small utility [CLASSIE](https://github.com/egao1980/classie) which addresses some common pains of using ```LASS``` - arithmetic with unit values, including files and some color manipulation.
 
-Here is my content.
+### Lisp setup
+
+```sh
+ros install Shinmera/lass
+ros install egao1980/classie
+```
 
 <!--more-->
 
-Excerpt separator can also be extracted from content.
-Add `excerpt: <string>` to the above metadata.
-Excerpt separator is `<!--more-->` by default.
+### Emacs configuration
+Edit and compile `.lass` file with bells and whistles:
+
+```emacs-lisp
+(defun lass-compile-current ()
+  (interactive)
+  (or
+   (when (and (sly-connected-p)
+              (or (sly-eval '(cl:not (cl:null (cl:find-package :classie))))
+                  (and (sly-eval '(cl:not (cl:null (cl:find-package :ql))))
+                       (sly-eval '(ql:quickload :classie)))))
+     (message "LASS compiled to %s" (sly-eval
+                                     `(uiop:native-namestring
+                                       (lass:generate
+                                        (uiop:parse-native-namestring ,(buffer-file-name))
+                                        :pretty t)))))
+   (message "LASS compiled. %s" (shell-command-to-string (format "lass %s" (shell-quote-argument (buffer-file-name)))))))
+
+(define-derived-mode lass-mode common-lisp-mode
+  "LASS" "Mode with auto-compiling for LASS files."
+  (add-hook 'after-save-hook 'lass-compile-current nil t))
+
+(add-to-list 'auto-mode-alist '("\\.lass\\'" . lass-mode))
+
+(provide 'lass)
+````
+
+### Theme details
+
+Modern HTML5 provides host of semantic tags enough to represent a blog without resorting to CSS classes and with minimal styling.
+
+After discovering minimalist [Marx CSS reset](https://github.com/mblode/marx) I've built a LASS code to replicate it - [Engels](https://github.com/egao1980/engels).
+
+This blog theme is loosely based on Coleslaw Hyde theme and Brutalist version of [Engels](https://github.com/egao1980/engels). Please check [coleslaw-theme-brutal](https://github.com/egao1980/coleslaw-theme-brutal) for implementation details.
+

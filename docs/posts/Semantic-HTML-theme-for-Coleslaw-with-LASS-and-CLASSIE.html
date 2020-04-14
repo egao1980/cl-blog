@@ -7,17 +7,51 @@ Tagged as <a href="https://egao1980.github.io/cl-blog/tag/bar.html">bar</a>, <a 
 Written on <time>
 2020-04-14 15:09:43 </time>
 </header>
-<div> <!-- **** your post here (remove this line) **** -->
+<div> <p>I've recently was facinated by Shinmera's <a href="https://github.com/Shinmera/LASS" >LASS</a> - a system to generate CSS in a way similar to SCSS / LESS but in a Common Lisp way.
+I've compiled a small utility <a href="https://github.com/egao1980/classie" >CLASSIE</a> which addresses some common pains of using <code>LASS</code> - arithmetic with unit values, including files and some color manipulation.</p>
 
-<!-- format: could be 'html' (for raw html) or 'md' (for markdown).  -->
+<h3>Lisp setup</h3>
 
-<p>Here is my content.</p>
+<pre><code>ros install Shinmera/lass
+ros install egao1980/classie</code></pre>
 
 <!--more-->
 
-<p>Excerpt separator can also be extracted from content.
-Add <code>excerpt: &lt;string&gt;</code> to the above metadata.
-Excerpt separator is <code>&lt;!--more--&gt;</code> by default.</p>
+<h3>Emacs configuration</h3>
+
+<p>Edit and compile <code>.lass</code> file with bells and whistles:</p>
+
+<p>``<code>emacs-lisp
+(defun lass-compile-current ()
+  (interactive)
+  (or
+   (when (and (sly-connected-p)
+              (or (sly-eval '(cl:not (cl:null (cl:find-package :classie))))
+                  (and (sly-eval '(cl:not (cl:null (cl:find-package :ql))))
+                       (sly-eval '(ql:quickload :classie)))))
+     (message &quot;LASS compiled to %s&quot; (sly-eval
+</code>(uiop:native-namestring
+                                       (lass:generate
+                                        (uiop:parse-native-namestring ,(buffer-file-name))
+                                        :pretty t)))))
+   (message &quot;LASS compiled. %s&quot; (shell-command-to-string (format &quot;lass %s&quot; (shell-quote-argument (buffer-file-name)))))))</p>
+
+<p>(define-derived-mode lass-mode common-lisp-mode
+  &quot;LASS&quot; &quot;Mode with auto-compiling for LASS files.&quot;
+  (add-hook 'after-save-hook 'lass-compile-current nil t))</p>
+
+<p>(add-to-list 'auto-mode-alist '(&quot;\.lass\'&quot; . lass-mode))</p>
+
+<p>(provide 'lass)
+````</p>
+
+<h3>Theme details</h3>
+
+<p>Modern HTML5 provides host of semantic tags enough to represent a blog without resorting to CSS classes and with minimal styling.</p>
+
+<p>After discovering minimalist <a href="https://github.com/mblode/marx" >Marx CSS reset</a> I've built a LASS code to replicate it - <a href="https://github.com/egao1980/engels" >Engels</a>.</p>
+
+<p>This blog theme is loosely based on Coleslaw Hyde theme and Brutalist version of <a href="https://github.com/egao1980/engels" >Engels</a>. Please check <a href="https://github.com/egao1980/coleslaw-theme-brutal" >coleslaw-theme-brutal</a> for implementation details.</p>
  </div> <footer> <nav role="navigation">
 <ul> <li><a href="https://egao1980.github.io/cl-blog/posts/Serve-static-site-with-clack-in-few-lines.html">Previous</a><br></li>
 
