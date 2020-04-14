@@ -27,7 +27,7 @@
            (robocopy "/MIR" "/IS" "/XD" ".git" "/XF" ".gitignore" "/SL")
            )
  :sitenav ((:url "http://github.com/egao1980" :name "Home")
-           (:url "https://www.linkedin.com/in/nikolai-matiushev-1958655" "Linkedin")
+           (:url "https://www.linkedin.com/in/nikolai-matiushev-1958655" :name "Linkedin")
            (:url "http://twitter.com/NickMatyushev" :name "Twitter")
            (:url "http://github.com/egao1980/cl-blog" :name "Code"))
  :staging-dir "c:/tmp/coleslaw/"  ;; for Coleslaw to do intermediate work, default: "/tmp/coleslaw"
