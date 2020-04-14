@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"> <channel> <title>All things Common Lisp</title> <link>https://egao1980.github.io/cl-blog</link> <atom:link href="https://egao1980.github.io/cl-blog/rss.xml" rel="self" type="application/rss+xml" /> <language>en-us</language> <pubDate>Tue, 14 Apr 2020 17:29:19 +0000</pubDate> <item> <title>Semantic HTML theme for Coleslaw with LASS and CLASSIE</title> <link>https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</link> <pubDate>2020-04-14 15:09:43</pubDate> <author>Nikolai Matiushev</author> <guid isPermaLink="true">https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</guid> <category><![CDATA[ bar ]]></category><category><![CDATA[ baz ]]></category> <description><![CDATA[ <!-- **** your post here (remove this line) **** -->
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"> <channel> <title>All things Common Lisp</title> <link>https://egao1980.github.io/cl-blog</link> <atom:link href="https://egao1980.github.io/cl-blog/rss.xml" rel="self" type="application/rss+xml" /> <language>en-us</language> <pubDate>Tue, 14 Apr 2020 17:55:52 +0000</pubDate> <item> <title>Semantic HTML theme for Coleslaw with LASS and CLASSIE</title> <link>https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</link> <pubDate>2020-04-14 15:09:43</pubDate> <author>Nikolai Matiushev</author> <guid isPermaLink="true">https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</guid> <category><![CDATA[ bar ]]></category><category><![CDATA[ baz ]]></category> <description><![CDATA[ <!-- **** your post here (remove this line) **** -->
 
 <!-- format: could be 'html' (for raw html) or 'md' (for markdown).  -->
 
@@ -30,8 +30,6 @@ Excerpt separator is <code>&lt;!--more--&gt;</code> by default.</p>
 Hunchentoot server is going to start.
 Listening on 127.0.0.1:5000.</code></pre>
  ]]></description> </item><item> <title>Minimal Lisp setup using lem</title> <link>https://egao1980.github.io/cl-blog/posts/Minimal-Lisp-setup-using-lem.html</link> <pubDate>2020-04-14 15:07:43</pubDate> <author>Nikolai Matiushev</author> <guid isPermaLink="true">https://egao1980.github.io/cl-blog/posts/Minimal-Lisp-setup-using-lem.html</guid> <category><![CDATA[ tips ]]></category><category><![CDATA[ linux ]]></category><category><![CDATA[ roswell ]]></category><category><![CDATA[ lem ]]></category><category><![CDATA[ qlot ]]></category><category><![CDATA[ cl-project ]]></category><category><![CDATA[ slime ]]></category> <description><![CDATA[ <p>This is a set of instructions to quickly setup Common Lisp development environment on Linux using <a href="https://github.com/cxxxr/lem" >Lem editor</a></p>
-
-<!--more-->
 
 <ol>
 <li>Install <code>roswell</code>, see <a href="https://github.com/roswell/roswell#installation-dependency--usage" >instructions</a></li>

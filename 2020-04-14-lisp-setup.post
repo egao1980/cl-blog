@@ -7,8 +7,6 @@ format: md
 
 This is a set of instructions to quickly setup Common Lisp development environment on Linux using [Lem editor](https://github.com/cxxxr/lem)
 
-<!--more-->
-
 1. Install `roswell`, see [instructions](https://github.com/roswell/roswell#installation-dependency--usage)
 2. ```ros install fukamachi/qlot```
 3. ```ros install fukamachi/cl-project```

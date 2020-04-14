@@ -5,15 +5,22 @@
     <h1>{$index.title}</h1>
   </header>
   {foreach $obj in $index.content}
-      <article>
-    <header>
-      <h2><a class="article-title" href="{$config.domain}/{$obj.url}">{$obj.title}</a></h2>
-       posted on <time>{$obj.date}</time>
-    </header>
-    <div>{$obj.excerpt |noAutoescape}</div>
-  </article>
-{/foreach}
-<nav role="navigation">
+    <article>
+      <header>
+        <h2><a class="article-title" href="{$config.domain}/{$obj.url}">{$obj.title}</a></h2>
+        posted on <time>{$obj.date}</time>
+      </header>
+      <div>{$obj.excerpt |noAutoescape}</div>
+      {if $obj.excerpt != $obj.text}
+        <footer>
+          <nav>
+            <a href="{$config.domain}/{$obj.url}">Continue reading</a>
+          </nav>
+        </footer>
+      {/if}
+    </article>
+  {/foreach}
+  <nav role="navigation">
   <ul>
     {if $prev} <li> <a href="{$config.domain}/{$prev.url}">Previous</a> </li> {/if}
     {if $next} <li> <a href="{$config.domain}/{$next.url}">Next</a> </li> {/if}
@@ -21,13 +28,13 @@
   </nav>
   <aside>
     {if $tags}
-  <section id="tagsoup">
-    <p>This blog covers
-    {foreach $tag in $tags}
-      <a href="{$config.domain}/{$tag.url}">{$tag.name}</a>{nil}
-      {if not isLast($tag)},{sp}{/if}
-    {/foreach}
-  </section>
+      <section id="tagsoup">
+        <p>This blog covers
+          {foreach $tag in $tags}
+            <a href="{$config.domain}/{$tag.url}">{$tag.name}</a>{nil}
+            {if not isLast($tag)},{sp}{/if}
+          {/foreach}
+      </section>
 {/if}
 {if $months}
   <section id="monthsoup">
