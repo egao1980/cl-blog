@@ -7,7 +7,7 @@ Tagged as <a href="https://egao1980.github.io/cl-blog/tag/clack.html">clack</a>,
 Written on <time>
 2020-04-14 15:08:40 </time>
 </header>
-<div> <p>While working on this blog I've stumbled on a basic need to serve static website from local folder.</p>
+<div> <p>While working on this blog I've stumbled on a basic need to serve static website from local folder. Though Coleslaw has magical command <code>coleslaw preview</code> it's good to know how to do it outside of Coleslaw.</p>
 
 <p>There are numerous solutions in any language but we're talking CL here. And it's surprisingly simple:</p>
 
@@ -16,8 +16,6 @@ Written on <time>
 <li>Create <code>app.lisp</code> in the target folder with the following content: <code>(lack.app.file:make-app)</code></li>
 <li>Run <code>clackup -s lack-middleware-static app.lisp</code> and enjoy.</li>
 </ol>
-
-<!--more-->
 
 <pre><code>To load "lack-middleware-static":
   Load 1 ASDF system:

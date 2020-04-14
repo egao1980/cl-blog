@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"> <channel> <title>All things Common Lisp</title> <link>https://egao1980.github.io/cl-blog</link> <atom:link href="https://egao1980.github.io/cl-blog/rss.xml" rel="self" type="application/rss+xml" /> <language>en-us</language> <pubDate>Tue, 14 Apr 2020 17:55:52 +0000</pubDate> <item> <title>Semantic HTML theme for Coleslaw with LASS and CLASSIE</title> <link>https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</link> <pubDate>2020-04-14 15:09:43</pubDate> <author>Nikolai Matiushev</author> <guid isPermaLink="true">https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</guid> <category><![CDATA[ bar ]]></category><category><![CDATA[ baz ]]></category> <description><![CDATA[ <!-- **** your post here (remove this line) **** -->
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"> <channel> <title>All things Common Lisp</title> <link>https://egao1980.github.io/cl-blog</link> <atom:link href="https://egao1980.github.io/cl-blog/rss.xml" rel="self" type="application/rss+xml" /> <language>en-us</language> <pubDate>Tue, 14 Apr 2020 18:03:24 +0000</pubDate> <item> <title>Semantic HTML theme for Coleslaw with LASS and CLASSIE</title> <link>https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</link> <pubDate>2020-04-14 15:09:43</pubDate> <author>Nikolai Matiushev</author> <guid isPermaLink="true">https://egao1980.github.io/cl-blog/posts/Semantic-HTML-theme-for-Coleslaw-with-LASS-and-CLASSIE.html</guid> <category><![CDATA[ bar ]]></category><category><![CDATA[ baz ]]></category> <description><![CDATA[ <!-- **** your post here (remove this line) **** -->
 
 <!-- format: could be 'html' (for raw html) or 'md' (for markdown).  -->
 
@@ -10,7 +10,7 @@
 <p>Excerpt separator can also be extracted from content.
 Add <code>excerpt: &lt;string&gt;</code> to the above metadata.
 Excerpt separator is <code>&lt;!--more--&gt;</code> by default.</p>
- ]]></description> </item><item> <title>Serve static site with clack in few lines</title> <link>https://egao1980.github.io/cl-blog/posts/Serve-static-site-with-clack-in-few-lines.html</link> <pubDate>2020-04-14 15:08:40</pubDate> <author>Nikolai Matiushev</author> <guid isPermaLink="true">https://egao1980.github.io/cl-blog/posts/Serve-static-site-with-clack-in-few-lines.html</guid> <category><![CDATA[ clack ]]></category><category><![CDATA[ lack ]]></category><category><![CDATA[ website ]]></category><category><![CDATA[ static ]]></category><category><![CDATA[ tips ]]></category> <description><![CDATA[ <p>While working on this blog I've stumbled on a basic need to serve static website from local folder.</p>
+ ]]></description> </item><item> <title>Serve static site with clack in few lines</title> <link>https://egao1980.github.io/cl-blog/posts/Serve-static-site-with-clack-in-few-lines.html</link> <pubDate>2020-04-14 15:08:40</pubDate> <author>Nikolai Matiushev</author> <guid isPermaLink="true">https://egao1980.github.io/cl-blog/posts/Serve-static-site-with-clack-in-few-lines.html</guid> <category><![CDATA[ clack ]]></category><category><![CDATA[ lack ]]></category><category><![CDATA[ website ]]></category><category><![CDATA[ static ]]></category><category><![CDATA[ tips ]]></category> <description><![CDATA[ <p>While working on this blog I've stumbled on a basic need to serve static website from local folder. Though Coleslaw has magical command <code>coleslaw preview</code> it's good to know how to do it outside of Coleslaw.</p>
 
 <p>There are numerous solutions in any language but we're talking CL here. And it's surprisingly simple:</p>
 
@@ -19,8 +19,6 @@ Excerpt separator is <code>&lt;!--more--&gt;</code> by default.</p>
 <li>Create <code>app.lisp</code> in the target folder with the following content: <code>(lack.app.file:make-app)</code></li>
 <li>Run <code>clackup -s lack-middleware-static app.lisp</code> and enjoy.</li>
 </ol>
-
-<!--more-->
 
 <pre><code>To load "lack-middleware-static":
   Load 1 ASDF system:

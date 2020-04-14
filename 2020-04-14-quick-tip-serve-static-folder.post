@@ -5,15 +5,13 @@ date: 2020-04-14 15:08:40
 format: md
 ;;;;;
 
-While working on this blog I've stumbled on a basic need to serve static website from local folder.
+While working on this blog I've stumbled on a basic need to serve static website from local folder. Though Coleslaw has magical command ```coleslaw preview``` it's good to know how to do it outside of Coleslaw.
 
 There are numerous solutions in any language but we're talking CL here. And it's surprisingly simple:
 
 1. Install `clack` with ```ros install clack```
 2. Create `app.lisp` in the target folder with the following content: ```(lack.app.file:make-app)```
 3. Run ```clackup -s lack-middleware-static app.lisp``` and enjoy.
-
-<!--more-->
 
 ```
 To load "lack-middleware-static":
