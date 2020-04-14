@@ -1,0 +1,130 @@
+((:or
+  select
+  textarea
+  (:and
+   input
+   (:= type
+       (:or text password email url date month time datetime datetime-local week number search tel))))
+ :background #(white)
+ :background-clip padding-box
+ :border #(border)
+ :border-radius #(br)
+ :color #(text)
+ :display block
+ :width 100%
+ :padding #(sm-pad) #(md-pad)
+ :line-height 1.5
+ :transition "border-color .15s ease-in-out, box-shadow .15s ease-in-out"
+ :font-family #(sans-serif))
+
+((:and input (:= type color))
+ :background #(white)
+ :border #(border)
+ :border-radius #(br)
+ :display inline-block
+ :vertical-align middle)
+
+((:and input ":not([type])") 
+ :-webkit-appearance none
+ :background #(white)
+ :background-clip padding-box
+ :border #(border)
+ :border-radius #(br)
+ :color #(text)
+ :display block
+ :width 100%
+ :padding #(sm-pad) #(md-pad)
+ :line-height 1.5
+ :transition "border-color .15s ease-in-out, box-shadow .15s ease-in-out"
+ :text-align left)
+
+((:and
+  (:or
+   select
+   textarea
+   (:and
+    input
+    (:= type
+        (:or text password email url date month time datetime datetime-local week number search tel color))))
+  :focus)
+ :background-color "#fff"
+ :border-color (mix #(primary) "#fff")
+ :outline 0
+ :box-shadow 0 0 0 0.2rem (fade-out #(primary) 0.75))
+
+((:and input ":not([type])" :focus)
+ :background-color "#fff"
+ :border-color (mix #(primary) "#fff")
+ :outline 0
+ :box-shadow 0 0 0 0.2rem (fade-out #(primary) 0.75))
+ 
+((:and input (:= type (:or file radio checkbox)) :focus)
+ :outline 1px thin #(dividers))
+
+((:and
+  (:or
+   select
+   textarea
+   (:and
+    input
+    (:= type
+        (:or text password email url date month time datetime datetime-local week number search tel color))))
+  [disabled])
+ :background-color #(dividers)
+ :color #(secondary)
+ :cursor not-allowed
+ :opacity 1)
+
+((:and input ":not([type])" [disabled])
+ :background-color #(dividers)
+ :color #(secondary)
+ :cursor not-allowed
+ :opacity 1)
+
+((:and (:or input select textarea) [readonly])
+ :border-color #(dividers)
+ :color #(secondary))
+
+((:and (:or input select textarea) :focus :invalid)
+  :border-color (darken #(red) 0.10)
+  :color #(red))
+
+((:and input (:= type (:or file radio checkbox)) :focus :invalid :focus)
+  :outline-color #(red))
+
+(select 
+ :border #(border)
+ :vertical-align sub)
+
+((:and select ":not([size])" ":not([multiple])")
+ :height "calc(2.25rem + 2px)")
+ 
+((:and select [multiple]) 
+ :height auto)
+
+(label 
+ :display inline-block
+ :line-height 2)
+
+(fieldset 
+ :border 0
+ :margin 0
+ :padding #(sm-pad) 0)
+
+
+(legend 
+ :border-bottom #(border)
+ :color #(text)
+ :display block
+ :margin-bottom #(sm-pad)
+ :padding #(sm-pad) 0
+ :width 100%)
+
+(textarea 
+ :overflow auto
+ :resize vertical)
+
+((:and input (:= type (:or checkbox radio)))
+ :box-sizing border-box
+ :padding 0
+ :display inline)

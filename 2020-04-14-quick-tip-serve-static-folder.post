@@ -1,0 +1,26 @@
+;;;;;
+title: Serve static site with clack in few lines
+tags: clack, lack, website, static, tips
+date: 2020-04-14 15:08:40
+format: md
+;;;;;
+
+While working on this blog I've stumbled on a basic need to serve static website from local folder.
+
+There are numerous solutions in any language but we're talking CL here. And it's surprisingly simple:
+
+1. Install `clack` with ```ros install clack```
+2. Create `app.lisp` in the target folder with the following content: ```(lack.app.file:make-app)```
+3. Run ```clackup -s lack-middleware-static app.lisp``` and enjoy.
+
+<!--more-->
+
+```
+To load "lack-middleware-static":
+  Load 1 ASDF system:
+    lack-middleware-static
+; Loading "lack-middleware-static"
+
+Hunchentoot server is going to start.
+Listening on 127.0.0.1:5000.
+```

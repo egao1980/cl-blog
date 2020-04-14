@@ -1,0 +1,42 @@
+{namespace coleslaw.theme.engels}
+
+{template index}
+  <header>
+    <h1>{$index.title}</h1>
+  </header>
+  {foreach $obj in $index.content}
+      <article>
+    <header>
+      <h2><a class="article-title" href="{$config.domain}/{$obj.url}">{$obj.title}</a></h2>
+       posted on <time>{$obj.date}</time>
+    </header>
+    <div>{$obj.excerpt |noAutoescape}</div>
+  </article>
+{/foreach}
+<nav role="navigation">
+  <ul>
+    {if $prev} <li> <a href="{$config.domain}/{$prev.url}">Previous</a> </li> {/if}
+    {if $next} <li> <a href="{$config.domain}/{$next.url}">Next</a> </li> {/if}
+  </ul>
+  </nav>
+  <aside>
+    {if $tags}
+  <section id="tagsoup">
+    <p>This blog covers
+    {foreach $tag in $tags}
+      <a href="{$config.domain}/{$tag.url}">{$tag.name}</a>{nil}
+      {if not isLast($tag)},{sp}{/if}
+    {/foreach}
+  </section>
+{/if}
+{if $months}
+  <section id="monthsoup">
+    <p>View content from
+      {foreach $month in $months}
+        <a href="{$config.domain}/{$month.url}">{$month.name}</a>{nil}
+        {if not isLast($month)},{sp}{/if}
+    {/foreach}
+  </section>
+{/if}
+</aside>
+{/template}

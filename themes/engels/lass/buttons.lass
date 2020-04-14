@@ -1,0 +1,72 @@
+((:or button
+      (:and input
+            (:= type (:or submit reset button))))
+ :background-color #(primary)
+ :border #(primary)
+ :border-radius #(br)
+ :color #(white)
+ :padding #(sm-pad) #(md-pad)
+ :display inline-block
+ :font-weight 400
+ :text-align center
+ :white-space nowrap
+ :vertical-align middle
+ :user-select none
+ :border 1px solid transparent
+ :font-size 1rem
+ :line-height 1.5
+ :transition "color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out")
+
+
+((:and
+  (:or button
+       (:and
+        input
+        (:= type (:or submit reset button))
+        ))
+  |::-moz-focus-inner|)
+ :padding 0)
+
+
+((:and
+  (:or button
+       (:and
+        input
+        (:= type (:or submit reset button))))
+  ":not(:disabled):active")
+  :background-color (darken #(primary) 0.1)
+  :border-color (darken #(primary) 0.125)
+  :color #(white))
+
+
+((:and
+  (:or button
+       (:and
+        input
+        (:= type (:or submit reset button))))
+  :hover)
+ :background-color (darken #(primary) 0.075)
+ :border-color (darken #(primary) 0.1)
+ :color #(white))
+
+
+((:and
+  (:or button
+       (:and
+        input
+        (:= type (:or submit reset button))))
+  :focus)
+ :outline 0
+ :box-shadow 0 0 0 0.2rem (fade-out #(primary) 0.5))
+
+((:and
+  (:or button
+       (:and
+        input
+        (:= type (:or submit reset button))))
+  :disabled)
+ :opacity .65
+ :cursor not-allowed
+ :background-color #(primary)
+ :border-color #(primary)
+ :color #(white))

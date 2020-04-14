@@ -1,0 +1,17 @@
+;;;;;
+title: Semantic HTML theme for Coleslaw with LASS and CLASSIE
+tags: bar, baz
+date: 2020-04-14 15:09:43
+format: md
+;;;;;
+
+<!-- **** your post here (remove this line) **** -->
+<!-- format: could be 'html' (for raw html) or 'md' (for markdown).  -->
+
+Here is my content.
+
+<!--more-->
+
+Excerpt separator can also be extracted from content.
+Add `excerpt: <string>` to the above metadata.
+Excerpt separator is `<!--more-->` by default.

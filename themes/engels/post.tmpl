@@ -1,0 +1,33 @@
+{namespace coleslaw.theme.engels}
+
+{template post}
+<article>{\n}
+  <header>{\n}
+    <h1>{$post.title}</h1>{\n}
+    <div class="tags">{\n}
+      {if $post.tags}
+        Tagged as {foreach $tag in $post.tags}
+          <a href="{$config.domain}/{$tag.url}">{$tag.name}</a>{nil}
+          {if not isLast($tag)},{sp}{/if}
+        {/foreach}
+      {/if}
+    </div>{\n}
+    Written on <time>{\n}
+    {if $post.date}
+      {$post.date}
+    {/if}
+  </time>{\n}
+  </header>{\n}
+  <div>
+    {$post.text |noAutoescape}
+  </div>
+  <footer>
+    <nav role="navigation">{\n}
+      <ul>
+        {if $prev} <li><a href="{$config.domain}/{$prev.url}">Previous</a><br></li> {/if}{\n}
+        {if $next} <li><a href="{$config.domain}/{$next.url}">Next</a><br></li> {/if}{\n}
+      </ul>
+    </nav>{\n}
+  </footer>{\n}
+</article>{\n}
+{/template}

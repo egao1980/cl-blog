@@ -1,0 +1,77 @@
+;;;;;
+title: Running McCLIM and other Lisp packages on Windows
+tags: windows, mcclim, hacks, tips, mingw64, roswell, emacs, sly
+date: 2020-04-14 15:03:27
+format: md
+;;;;;
+
+McCLIM is an amazing project and a treasure trove of useful utils like CLOUSEAU. Unfortunatelly currently McCLIM has no backend for Windows. I'd like to use McCLIM and experiment with developing a backend.
+
+Windows is quite hostile environment for mostly Unix-based Lisp packages. And McCLIM is not an exception. It uses CLX as a backend library and depends on STATIC-VECTORS - package that require CFFI-GROVELER to dynamically compile C program on system load.
+
+<!--more-->
+
+## Lisp (SBCL) setup for Windows
+
+### Roswell
+I'm using [Roswell](https://github.com/roswell/roswell) to manage Lisp implementations and local projects. 
+
+#### Setup MSYS
+This part of loosely based on Portacle build instructions:
+
+* Install [MSYS2](https://www.msys2.org/). Please use default installation path. It will save you lots of time.
+
+* 7Zip, download, install, add it to Windows PATH [http://www.7-zip.org](http://www.7-zip.org/)
+
+* Open the MSYS shell and run `pacman -Sy pacman`
+
+* Reopen the shell and run `pacman -Syu`
+
+* Install packages:
+
+```sh
+pacman -S unzip git gpg curl base-devel mingw-w64-x86_64-toolchain mingw-w64-x86_64-xpm-nox mingw-w64-x86_64-pcre mingw-w64-x86_64-curl mingw-w64-x86_64-gnutls mingw-w64-x86_64-iconv mingw-w64-x86_64-libgcrypt mingw-w64-x86_64-glfw
+```
+* Launch the MinGW64 shell and use it for further steps
+
+#### Install roswell
+* Follow [https://github.com/roswell/roswell/wiki/Installation#building-from-source](https://github.com/roswell/roswell/wiki/Installation#building-from-source). 
+* In my case I've used `./configure --prefix=/c/opt/roswell & make & make install`.
+* Add `roswell/bin` and `$HOME/.roswell/bin` folders to your Windows and Mingw64 `PATH` environment variables.
+* Run `ros` for initial setup
+
+#### Build latest SBCL
+* Install latest SBCL `ros install sbcl/2.0.3`
+* Switch to that version `ros use sbcl/2.0.3`
+ 
+#### Configure Sly 
+I'm using Sly but Slime setup roughly the same.
+Please note the hacky way of running `ros` in Mingw64 shell.
+
+* Start a bare shell without fancy terminal emulator window as that's what Emacs expects `-defterm -no-start`.
+
+* `ros -L sbcl` selects our freshly built SBCL version. Please refer to `roswell` documentation on managing Lisp implementations.
+
+* `DISPLAY=localhost:0` is the usual X Server display environment variable. This is needed for McCLIM to run and obviously requires that X Server program is up an running on display :0.
+
+```emacs-lisp
+(set-language-environment "UTF-8")
+(set-terminal-coding-system 'utf-8)
+    
+(use-package sly
+             :ensure t
+             :init
+             (remove-hook 'lisp-mode-hook 'slime-lisp-mode-hook)
+             :config
+             (setq sly-net-coding-system 'utf-8-unix)
+             (setq sly-lisp-implementations
+                   `((sbcl ("c:/msys64/msys2_shell.cmd"  "-defterm" "-mingw64" "-no-start" "-c" "DISPLAY=localhost:0 ros -L sbcl -Q run") :coding-system utf-8-unix))))
+```
+#### Running McCLIM
+* Precache fonts 
+	* In `Mingw64` terminal run `fc-cache /c/Windows/Fonts`
+	* Add this command to `~/.bashrc` 
+* Ensure X Server is running
+* Run McCLIM as usual
+
+
