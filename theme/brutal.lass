@@ -106,8 +106,26 @@
 ((pre code)
  :overflow-wrap normal)
 
+;; A docs page's contents (article > nav): plain links, nested lists
+;; indented, unlike the uppercase full-width header and footer navs.
+(((article > nav) a)
+ :width auto
+ :text-transform none)
+
+(((article > nav) ul ul)
+ :padding-left 1.5em)
+
 (:media "(max-width: 600px)"
  ((body > header)
   :grid-template-columns 1fr)
  ((body > header > *)
-  :text-align start))
+  :text-align start)
+ ;; a long title word (ALTERNATIVES) fits a phone; breaks as a last resort
+ (((body > header) h1)
+  :font-size 24px
+  :letter-spacing 0.3em
+  :overflow-wrap anywhere)
+ ;; wide tables scroll instead of widening the page
+ (table
+  :display block
+  :overflow-x auto))

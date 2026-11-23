@@ -101,13 +101,14 @@ DATETIME-PARSE-ERROR."
 (defun %join-lines (lines)
   (format nil "~{~A~^~%~}" lines))
 
-(defun %split-front-matter (lines file)
-  "→ (values yaml-text-or-NIL body-lines)."
+(defun %split-front-matter (lines file &optional (condition 'invalid-post))
+  "→ (values yaml-text-or-NIL body-lines). An unclosed front matter
+signals CONDITION (INVALID-POST or INVALID-PAGE)."
   (if (and lines (string= (first lines) "---"))
       (let ((end (position-if (lambda (l) (member l '("---" "...") :test #'string=))
                               lines :start 1)))
         (unless end
-          (error 'invalid-post :path file :reason "front matter has no closing ---"))
+          (error condition :path file :reason "front matter has no closing ---"))
         (values (%join-lines (subseq lines 1 end)) (subseq lines (1+ end))))
       (values nil lines)))
 
@@ -132,17 +133,20 @@ DATETIME-PARSE-ERROR."
          (let ((v (gethash key meta))) (if (eq v :null) nil v)))
         (t (cdr (assoc key meta :test #'string-equal)))))
 
-(defun %meta-string (meta key file &key required)
+(defun %meta-string (meta key file &key required (condition 'invalid-post))
+  "KEY's value in META as a trimmed string, NIL when absent. Signals
+CONDITION (INVALID-POST or INVALID-PAGE) when it is not text or, REQUIRED,
+missing or empty."
   (let ((v (%meta meta key)))
     (cond ((stringp v) (let ((s (string-trim '(#\Space #\Tab) v)))
                          (if (and required (zerop (length s)))
-                             (error 'invalid-post :path file :reason (format nil "~A is empty" key))
+                             (error condition :path file :reason (format nil "~A is empty" key))
                              s)))
           ((realp v) (princ-to-string v))
           ((null v) (when required
-                      (error 'invalid-post :path file :reason (format nil "no ~A" key))))
-          (t (error 'invalid-post :path file
-                    :reason (format nil "~A must be text, not ~S" key v))))))
+                      (error condition :path file :reason (format nil "no ~A" key))))
+          (t (error condition :path file
+                              :reason (format nil "~A must be text, not ~S" key v))))))
 
 (defun %split-tags (string separators)
   (remove-if (lambda (s) (zerop (length s)))

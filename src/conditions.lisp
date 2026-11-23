@@ -16,6 +16,14 @@
   (:documentation "A post cannot be read: no title, a bad date or slug, a
 slug another post has. READ-POSTS offers CONTINUE (leave the post out)."))
 
+(define-condition invalid-page (blog-error)
+  ((path :initarg :path :reader invalid-page-path)
+   (reason :initarg :reason :reader invalid-page-reason))
+  (:report (lambda (c s)
+             (format s "~A: ~A" (invalid-page-path c) (invalid-page-reason c))))
+  (:documentation "A docs page cannot be read: no title, a bad slug, a slug
+another page has. READ-PAGES offers CONTINUE (leave the page out)."))
+
 (define-condition unsafe-output (blog-error)
   ((path :initarg :path :reader unsafe-output-path))
   (:report (lambda (c s)
