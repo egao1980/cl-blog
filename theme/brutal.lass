@@ -1,0 +1,98 @@
+;;;; brutal: the blog's rules on top of engels. Bands of one flat colour,
+;;;; uppercase headings that invert on hover. Colours are the --blog-*
+;;;; custom properties (src/theme.lisp), so light and dark both work.
+
+(* :margin 0)
+
+((:or header footer)
+ :padding 0
+ :border none)
+
+((body > header)
+ :display grid
+ :grid-template-columns auto 1fr
+ :align-items start
+ :justify-content center)
+
+((body > header > *)
+ :height 100%
+ :background "var(--blog-band)"
+ :display grid
+ :font-stretch extra-expanded
+ :letter-spacing 0.5em
+ :align-items center
+ :text-align end)
+
+((body > footer)
+ :display grid
+ :grid-template-columns auto
+ :align-items center
+ :justify-content center
+ :padding 1em
+ :background "var(--blog-band)")
+
+(a :display inline-block)
+
+((nav a)
+ :width 100%
+ :text-transform uppercase)
+
+(((body > header) (:and a :link))
+ :text-decoration none)
+
+((:or h1 h2 h3 h4 h5)
+ :margin 0
+ :padding 10px 0
+ :color "var(--blog-ink)"
+ :background "var(--blog-band)"
+ :text-transform uppercase)
+
+(((:or h1 h2 h3 h4 h5) a)
+ :margin 0
+ :color "var(--blog-ink)"
+ :background "var(--blog-band)")
+
+((:and (:or h1 h2 h3 h4 h5 a) :hover)
+ :color "var(--blog-paper)"
+ :background "var(--blog-ink)")
+
+(((:and (:or h1 h2 h3 h4 h5) :hover) a)
+ :color "var(--blog-paper)"
+ :background "var(--blog-ink)")
+
+((:and a :link)
+ :text-decoration underline
+ :text-decoration-style dotted)
+
+((:and a :hover)
+ :text-decoration none)
+
+(aside
+ :padding 1em
+ :background "var(--blog-band)")
+
+((main > article)
+ :margin-bottom 2em)
+
+((article img)
+ :max-width 100%
+ :height auto)
+
+;; Code keeps its lines: engels (Marx) wraps pre and breaks code anywhere,
+;; which splits Lisp symbols. Blocks scroll instead.
+(pre
+ :white-space pre
+ :overflow-x auto)
+
+(code
+ :word-break normal
+ :overflow-wrap anywhere)
+
+((pre code)
+ :overflow-wrap normal)
+
+(:media "(max-width: 600px)"
+ ((body > header)
+  :grid-template-columns 1fr)
+ ((body > header > *)
+  :text-align start))
