@@ -1,7 +1,7 @@
 (in-package #:cl-blog)
 
 ;;; ------------------------------------------------------------------
-;;; The site:
+;;; A blog (site.yaml kind: blog, the default):
 ;;;   index.html, 1.html … N.html  newest posts' excerpts, PER-PAGE each
 ;;;                                (index.html = 1.html, canonical /)
 ;;;   posts/SLUG.html              a post
@@ -10,6 +10,11 @@
 ;;;   tag/SLUG-rss.xml, tag/SLUG-atom.xml   for each tag in site.yaml feeds
 ;;;   sitemap.xml, css/style.css   (engels + brutal, pruned to the pages)
 ;;;   static/…                     copied as is
+;;; A docs site (kind: docs; pages: src/page.lisp):
+;;;   index.html                   the index page; required
+;;;   SLUG.html                    every other page, at the root
+;;;   sitemap.xml, css/style.css, static/…   as for a blog; no feeds,
+;;;                                tags, dates or numbered pages
 
 (defparameter +feed-size+ 20)
 
@@ -43,12 +48,10 @@
             (push (list m post) months))))
     (sort months #'string> :key #'first)))
 
-(defun render-site (site &key drafts)
-  "SITE's generated files → a list of (site-relative-path . text), static/
-not included."
+(defun %render-blog (site drafts)
   (let* ((posts (read-posts site :drafts drafts))
          (sources (let ((h (make-hash-table :test 'equal)))
-                    (dolist (p posts h) (setf (gethash (post-source-name p) h) p))))
+                    (dolist (p posts h) (setf (gethash (post-source-name p) h) (post-url p)))))
          (tags (%tag-index posts))
          (months (%month-index posts))
          (tag-links (mapcar (lambda (e) (cons (first e) (second e))) tags))
@@ -98,23 +101,57 @@ not included."
     (let* ((documents (nreverse documents))
            (feed-posts (subseq posts 0 (min +feed-size+ (length posts))))
            (files
-             (append
-              (mapcar (lambda (d) (cons (car d) (html:serialize (cdr d)))) documents)
-              (list (cons "css/style.css"
-                          (css:write-stylesheet (site-stylesheet (mapcar #'cdr documents))
-                                                :pretty nil))
-                    (cons "rss.xml" (rss-feed site feed-posts "rss.xml" :sources sources))
-                    (cons "atom.xml" (atom-feed site feed-posts "atom.xml" :sources sources)))
-              (loop for name in (site-feeds site)
-                    for slug = (tag-slug name)
-                    for tagged = (cddr (find slug tags :key #'second :test #'string=))
-                    for title = (format nil "~A: ~A" (site-title site) name)
-                    for rss = (format nil "tag/~A-rss.xml" slug)
-                    for atom = (format nil "tag/~A-atom.xml" slug)
-                    for some = (subseq tagged 0 (min +feed-size+ (length tagged)))
-                    collect (cons rss (rss-feed site some rss :title title :sources sources))
-                    collect (cons atom (atom-feed site some atom :title title :sources sources))))))
+            (append
+             (mapcar (lambda (d) (cons (car d) (html:serialize (cdr d)))) documents)
+             (list (cons "css/style.css"
+                         (css:write-stylesheet (site-stylesheet (mapcar #'cdr documents))
+                                               :pretty nil))
+                   (cons "rss.xml" (rss-feed site feed-posts "rss.xml" :sources sources))
+                   (cons "atom.xml" (atom-feed site feed-posts "atom.xml" :sources sources)))
+             (loop for name in (site-feeds site)
+                   for slug = (tag-slug name)
+                   for tagged = (cddr (find slug tags :key #'second :test #'string=))
+                   for title = (format nil "~A: ~A" (site-title site) name)
+                   for rss = (format nil "tag/~A-rss.xml" slug)
+                   for atom = (format nil "tag/~A-atom.xml" slug)
+                   for some = (subseq tagged 0 (min +feed-size+ (length tagged)))
+                   collect (cons rss (rss-feed site some rss :title title :sources sources))
+                   collect (cons atom (atom-feed site some atom :title title :sources sources))))))
       (append files (list (cons "sitemap.xml" (sitemap site (nreverse sitemap))))))))
+
+(defun %render-docs (site)
+  (let* ((pages (read-pages site))
+         (sources (let ((h (make-hash-table :test 'equal)))
+                    (dolist (p pages h) (setf (gethash (page-source-name p) h) (page-url p)))))
+         (documents
+          (loop with v = (coerce pages 'vector)
+                for i from 0 below (length v)
+                for page = (aref v i)
+                collect (cons (page-url page)
+                              (docs-page site page
+                                         :previous (and (> i 0) (aref v (1- i)))
+                                         :next (and (< (1+ i) (length v)) (aref v (1+ i)))
+                                         :pages pages
+                                         :sources sources)))))
+    (unless (and pages (page-index-p (first pages)))
+      (error 'invalid-site
+             :reason (format nil "a docs site needs an index page: index: in site.yaml, ~
+                                  or index.org / index.md in ~A"
+                             (site-pages-dir site))))
+    (append
+     (mapcar (lambda (d) (cons (car d) (html:serialize (cdr d)))) documents)
+     (list (cons "css/style.css"
+                 (css:write-stylesheet (site-stylesheet (mapcar #'cdr documents)) :pretty nil))
+           (cons "sitemap.xml"
+                 (sitemap site (mapcar (lambda (d) (cons (car d) nil)) documents)))))))
+
+(defun render-site (site &key drafts)
+  "SITE's generated files → a list of (site-relative-path . text), static/
+not included. A blog renders its posts (DRAFTS includes drafts), a docs
+site its pages."
+  (ecase (site-kind site)
+    (:blog (%render-blog site drafts))
+    (:docs (%render-docs site))))
 
 (defun %check-output (root output)
   "Signal UNSAFE-OUTPUT unless OUTPUT is a directory strictly inside ROOT."

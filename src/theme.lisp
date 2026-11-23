@@ -7,10 +7,12 @@
 ;;; URLs: every link a page makes is relative to that page (REL), so the
 ;;; built site works from file://, under a project path (/cl-blog/) and at a
 ;;; domain root. In feeds (*ABSOLUTE-BASE* set) they are absolute.
-;;; URLs written in a post are site-root relative: "images/a.png" and
-;;; "/images/a.png" both mean ROOT/static/images/a.png; a link whose last
-;;; segment is another post's source file name (2026-11-23-note.md) goes to
-;;; that post's page. Scheme URLs, //host and #fragment links are kept.
+;;; URLs written in a post or page are site-root relative: "images/a.png"
+;;; and "/images/a.png" both mean ROOT/static/images/a.png; a link whose
+;;; last segment is another post's (or, on a docs site, page's) source file
+;;; name (2026-11-23-note.md, requests.org) goes to that post's or page's
+;;; file. Scheme URLs, //host and #fragment links are kept. So are
+;;; site.yaml nav URLs with a scheme; other nav URLs are site-root relative.
 
 (defvar *page-path* "index.html"
   "The site-relative path of the page being built.")
@@ -40,9 +42,15 @@
          (or (null slash) (< colon slash))
          (alpha-char-p (char url 0)))))
 
+(defun %url-file-name (url)
+  "The last path segment of URL (no query or fragment)."
+  (let* ((cut (or (position-if (lambda (ch) (find ch "?#")) url) (length url)))
+         (path (subseq url 0 cut)))
+    (subseq path (1+ (or (position #\/ path :from-end t) -1)))))
+
 (defun %resolve-content-url (url sources)
-  "URL from a post, made relative to the current page (see the header).
-SOURCES: source file name → POST."
+  "URL from a post or page, made relative to the current page (see the
+header). SOURCES: source file name → its page's site-relative path."
   (if (or (%scheme-p url)
           (and (plusp (length url)) (char= (char url 0) #\#))
           (and (>= (length url) 2) (string= "//" url :end2 2)))
@@ -50,9 +58,9 @@ SOURCES: source file name → POST."
       (let* ((cut (or (position-if (lambda (ch) (find ch "?#")) url) (length url)))
              (site-path (string-left-trim "/" (subseq url 0 cut)))
              (tail (subseq url cut))
-             (name (subseq site-path (1+ (or (position #\/ site-path :from-end t) -1))))
-             (post (and (plusp (length name)) (gethash name sources))))
-        (concatenate 'string (rel (if post (post-url post) site-path)) tail))))
+             (name (%url-file-name url))
+             (target (and (plusp (length name)) (gethash name sources))))
+        (concatenate 'string (rel (or target site-path)) tail))))
 
 (defun content-url-fn (sources)
   "The html-markdown URL function for post content on the current page."
@@ -99,17 +107,28 @@ SOURCES: source file name → POST."
         (el "meta" (list (cons "name" "description") (cons "content" description))))
       (el "link" (list (cons "rel" "canonical") (cons "href" (absolute-url site *page-path*))))
       (el "link" (list (cons "rel" "stylesheet") (cons "href" (rel "css/style.css"))))
-      (el "link" (list (cons "rel" "alternate") (cons "type" "application/rss+xml")
-                       (cons "title" (site-title site)) (cons "href" (rel "rss.xml"))))
-      (el "link" (list (cons "rel" "alternate") (cons "type" "application/atom+xml")
-                       (cons "title" (site-title site)) (cons "href" (rel "atom.xml"))))))
+      (when (eq (site-kind site) :blog)
+        (list
+         (el "link" (list (cons "rel" "alternate") (cons "type" "application/rss+xml")
+                          (cons "title" (site-title site)) (cons "href" (rel "rss.xml"))))
+         (el "link" (list (cons "rel" "alternate") (cons "type" "application/atom+xml")
+                          (cons "title" (site-title site)) (cons "href" (rel "atom.xml"))))))))
+
+(defun %nav-url (url)
+  "A site.yaml nav URL: kept when it has a scheme or is //host or #x, else
+site-root relative."
+  (if (or (%scheme-p url)
+          (and (plusp (length url)) (char= (char url 0) #\#))
+          (and (>= (length url) 2) (string= "//" url :end2 2)))
+      url
+      (rel (string-left-trim "/" url))))
 
 (defun %site-header (site)
   (el "header" nil
       (el "nav" nil
           (el "ul" nil
               (loop for (name . url) in (site-nav site)
-                    collect (el "li" nil (%a url name)))))
+                    collect (el "li" nil (%a (%nav-url url) name)))))
       (el "h1" nil (%a (rel "index.html") (site-title site)))))
 
 (defun %site-footer (site)
@@ -163,6 +182,89 @@ SOURCES: source file name → POST."
                             (when newer (el "li" nil (%a (rel (post-url newer)) "Next"))))))))
           :title (post-title post)
           :description (post-description post))))
+
+(defun %heading-level (node)
+  "N for an <hN> element node, else NIL."
+  (when (html:html-element-p node)
+    (let ((name (html:html-element-name node)))
+      (and (= 2 (length name))
+           (char-equal (char name 0) #\h)
+           (digit-char-p (char name 1))))))
+
+(defun %toc-list (entries)
+  "ENTRIES ((level text id) …) → a <ul>; an entry deeper than the
+shallowest nests in the entry before it."
+  (when entries
+    (let ((top (reduce #'min entries :key #'first)))
+      (el "ul" nil
+          (loop while entries
+                collect (destructuring-bind (level text id) (pop entries)
+                          (declare (ignore level))
+                          (let ((children (loop while (and entries (> (first (first entries)) top))
+                                                collect (pop entries))))
+                            (el "li" nil (%a (format nil "#~A" id) text) (%toc-list children)))))))))
+
+(defun %toc (nodes depth)
+  "The contents of a page body (NODES, rendered with heading ids): its
+headings from page level 1 (h2) to DEPTH (hDEPTH+1), in a <nav>."
+  (let ((entries (loop for node in nodes
+                       for level = (%heading-level node)
+                       for id = (and level (html:element-attr node "id"))
+                       when (and id (<= 2 level (1+ depth)))
+                         collect (list level (html:element-text node) id))))
+    (when entries
+      (el "nav" '(("aria-label" . "Contents"))
+          (el "h2" nil "Contents")
+          (%toc-list entries)))))
+
+(defun %byline (page)
+  (let ((author (page-author page))
+        (email (page-email page)))
+    (when (or author email)
+      (el "p" nil
+          (when author (list "By " author))
+          (when (and author email) ", ")
+          (when email (%a (format nil "mailto:~A" email) email))
+          "."))))
+
+(defun %pages-aside (pages current)
+  "The other pages but the index, as a list of links."
+  (let ((listed (remove-if #'page-index-p pages)))
+    (when (and listed (not (page-index-p current)))
+      (el "aside" nil
+          (el "section" nil
+              (el "p" nil "Pages: "
+                  (%comma-list (mapcar (lambda (p)
+                                         (if (eq p current)
+                                             (el "strong" nil (page-title p))
+                                             (%a (rel (page-url p)) (page-title p))))
+                                       listed))
+                  "."))))))
+
+(defun docs-page (site page &key previous next pages sources)
+  "PAGE's file (a docs site); PREVIOUS / NEXT are its neighbours in PAGES (or
+NIL)."
+  (let* ((*page-path* (page-url page))
+         (body (hm:render-markdown (page-blocks page) :heading-offset 1 :heading-ids t
+                                                      :url (content-url-fn sources))))
+    (page site
+          (list
+           (el "article" nil
+               (el "header" nil
+                   (el "h1" nil (page-title page))
+                   (%byline page))
+               (when (page-toc page) (%toc body (page-toc page)))
+               body
+               (when (or previous next)
+                 (el "footer" nil
+                     (el "nav" nil
+                         (el "ul" nil
+                             (when previous (el "li" nil (%a (rel (page-url previous)) "Previous")))
+                             (when next (el "li" nil (%a (rel (page-url next)) "Next"))))))))
+           (%pages-aside pages page))
+          :title (unless (and (page-index-p page) (string= (page-title page) (site-title site)))
+                   (page-title page))
+          :description (page-description page))))
 
 ;;; List pages (index, tags, months)
 

@@ -9,10 +9,19 @@
 ;;;   nav                     [{name, url}], the header links ([])
 ;;;   license                 {name, url, image}: the footer's licence link,
 ;;;                           IMAGE a path under the site root (none)
+;;;   kind                    blog (posts, the default) or docs (pages)
+;;; Docs sites only:
+;;;   pages-dir               the pages' directory, relative to the root and
+;;;                           inside it ("pages"; "." is the root itself)
+;;;   index                   the file name of the page that is index.html
+;;;                           (index.org, else index.md, when present)
+;;;   exclude                 file names in pages-dir that are not pages ([])
+;;; A nav URL with no scheme (and not //host) is site-root relative.
 
 (defclass site ()
   ((root :initarg :root :reader site-root
          :documentation "The directory holding site.yaml, posts/ and static/.")
+   (kind :initarg :kind :reader site-kind :documentation ":blog or :docs.")
    (title :initarg :title :reader site-title)
    (description :initarg :description :reader site-description)
    (author :initarg :author :reader site-author)
@@ -22,7 +31,13 @@
    (feeds :initarg :feeds :reader site-feeds)
    (nav :initarg :nav :reader site-nav :documentation "List of (name . url).")
    (license :initarg :license :reader site-license
-            :documentation "NIL or a plist (:name :url :image)."))
+            :documentation "NIL or a plist (:name :url :image).")
+   (pages-dir :initarg :pages-dir :reader site-pages-dir
+              :documentation "Docs: the pages' directory, relative to the root.")
+   (index :initarg :index :reader site-index
+          :documentation "Docs: the file name of the index page, or NIL.")
+   (exclude :initarg :exclude :reader site-exclude
+            :documentation "Docs: file names in the pages directory that are not pages."))
   (:documentation "The settings of site.yaml (READ-SITE) and the site root."))
 
 (defun %setting (table key)
@@ -66,6 +81,22 @@
                         (and (plusp (length image)) image))))
         (t (error 'invalid-site :reason "license must be {name, url, image}"))))
 
+(defun %kind (table)
+  (let ((kind (%site-string table "kind" :default "blog")))
+    (cond ((string-equal kind "blog") :blog)
+          ((string-equal kind "docs") :docs)
+          (t (error 'invalid-site
+                    :reason (format nil "kind must be blog or docs, not ~S" kind))))))
+
+(defun %pages-dir (table)
+  (let ((dir (%site-string table "pages-dir" :default "pages")))
+    (when (or (zerop (length dir))
+              (char= (char dir 0) #\/)
+              (member ".." (uiop:split-string dir :separator "/\\") :test #'string=))
+      (error 'invalid-site
+             :reason (format nil "pages-dir must be a directory inside the site, not ~S" dir)))
+    dir))
+
 (defun read-site (root)
   "Read ROOT/site.yaml → a SITE. Signals INVALID-SITE."
   (let* ((root (sp:ensure-directory root))
@@ -82,6 +113,7 @@
           (error 'invalid-site :reason "per-page must be a positive integer"))
         (make-instance 'site
                        :root root
+                       :kind (%kind table)
                        :title (%site-string table "title" :required t)
                        :description (%site-string table "description")
                        :author (%site-string table "author" :required t)
@@ -90,4 +122,8 @@
                        :per-page per-page
                        :feeds (%string-list (%setting table "feeds") "feeds")
                        :nav (%nav (%setting table "nav"))
-                       :license (%license (%setting table "license")))))))
+                       :license (%license (%setting table "license"))
+                       :pages-dir (%pages-dir table)
+                       :index (let ((index (%site-string table "index")))
+                                (and (plusp (length index)) index))
+                       :exclude (%string-list (%setting table "exclude") "exclude"))))))

@@ -1,0 +1,25 @@
+name: Publish checkout
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "OCI tag (empty → .asd :version)"
+        required: false
+        default: ""
+        type: string
+      packager_version:
+        description: "Packager image version"
+        required: false
+        default: "latest"
+        type: string
+
+jobs:
+  publish:
+    uses: egao1980/cl-repository/.github/workflows/publish-source.yml@main
+    with:
+      version: ${{ inputs.version }}
+      packager-version: ${{ inputs.packager_version }}
+    permissions:
+      contents: read
+      packages: write
