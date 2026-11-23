@@ -4,6 +4,7 @@
                     (#:md #:markdown-protocol)
                     (#:org #:org-markup)
                     (#:hm #:html-markdown)
+                    (#:hl #:highlight-protocol)
                     (#:html #:html-protocol)
                     (#:css #:css-protocol)
                     (#:xml #:xml-protocol)
@@ -29,4 +30,4 @@
    #:page-path #:page-format #:page-source-name #:page-slug #:page-title #:page-blocks
    #:page-description #:page-author #:page-email #:page-toc #:page-index-p #:page-url
    ;; building
-   #:render-site #:build-site #:site-stylesheet))
+   #:render-site #:build-site #:site-stylesheet #:render-content))

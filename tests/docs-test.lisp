@@ -96,8 +96,9 @@
       (ok (has "href=\"requests.html\">Next</a>" index) "index → the first page it links")
       (ng (has "s-truncate" requests) ":exports none helper dropped")
       (ng (has "UNNUMBERED" requests) "property drawers hidden")
-      (ok (has "<pre><code class=\"language-lisp\">(+ 1 2)" requests) "a src block with its language")
-      (ok (has "<pre><code>3" requests) ":exports both from header-args: the result")
+      (ok (has "<pre><code class=\"language-lisp\"><span class=\"hl-punctuation\">(</span>" requests)
+          "a src block with its language, highlighted")
+      (ok (has "<pre><code>3" requests) ":exports both from header-args: the result, plain")
       (ok (has "<th>Library</th>" requests) "tables")
       (ok (has "href=\"json.html\">json</a>" requests))
       (ok (has "href=\"index.html\">Previous</a>" requests))
@@ -161,6 +162,38 @@
       (ok (built-p "b.html") "a.org (slug b) claims b.html first")
       (ng (built-p "a.html"))
       (ng (built-p "untitled.html")))))
+
+(deftest code-highlighting
+  (with-site (root (cons "posts/2026-01-01-code.md"
+                         (nl "---" "title: Code" "date: 2026-01-01" "---"
+                             "```python" "def f(): return 1" "```"
+                             "<!--more-->"
+                             "```foo" "x < 1" "```"
+                             "```" "no language" "```"))
+                   (cons "posts/2026-01-02-org.org"
+                         (nl "#+TITLE: Org code" "#+DATE: 2026-01-02"
+                             "#+begin_src lisp" "(defun f (x) 1)" "#+end_src"
+                             "#+RESULTS:" ": RESULT")))
+    (blog:build-site :root root)
+    (let ((code (out "posts/code.html"))
+          (org (out "posts/org.html"))
+          (index (out "index.html"))
+          (css (out "css/style.css")))
+      (ok (has "<pre><code class=\"language-python\"><span class=\"hl-keyword\">def</span> <span class=\"hl-function\">f</span>"
+               code)
+          "a markdown fence, highlighted")
+      (ok (has "<pre><code class=\"language-foo\">x &lt; 1" code)
+          "an unknown language: plain, escaped, and the build goes on")
+      (ok (has "<pre><code>no language" code) "no language: plain")
+      (ok (has "<span class=\"hl-keyword\">defun</span>" org) "an org src block")
+      (ng (has "RESULT" org) "Org's default :exports code drops the result")
+      (ok (has "<span class=\"hl-keyword\">def</span>" index) "excerpts on list pages too")
+      (ng (has "hl-keyword" (out "rss.xml")) "feeds keep plain code")
+      (ok (has ".hl-keyword{color:var(--hl-keyword)}" css) "the highlight rules")
+      (ok (>= (count-matches "--hl-keyword:" css) 2) "light and dark colours")))
+  (with-site (root (cons "posts/2026-01-01-text.md" (nl "---" "title: T" "date: 2026-01-01" "---" "Text.")))
+    (blog:build-site :root root)
+    (ng (has ".hl-" (out "css/style.css")) "no code, no highlight rules")))
 
 (deftest blog-nav-urls
   (with-site (root (cons "site.yaml" (nl "title: B" "author: A" "domain: https://x.y"

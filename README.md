@@ -2,7 +2,7 @@
 
 "All things Common Lisp": <https://egao1980.github.io/cl-blog/>.
 
-The generator lives in this repo too. It is a small Common Lisp system on the [cl-stack](https://github.com/egao1980/cl-stack): [markdown-protocol](https://github.com/egao1980/markdown-protocol) and [org-markup](https://github.com/egao1980/org-markup) parse posts, [html-markdown](https://github.com/egao1980/html-markdown) and [html-protocol](https://github.com/egao1980/html-protocol) render them, and [engels](https://github.com/egao1980/engels) plus `theme/brutal.lass` (through [css-backend-lass](https://github.com/egao1980/css-backend-lass)) style them. Dependencies come from GHCR through `cl-repo`.
+The generator lives in this repo too. It is a small Common Lisp system on the [cl-stack](https://github.com/egao1980/cl-stack): [markdown-protocol](https://github.com/egao1980/markdown-protocol) and [org-markup](https://github.com/egao1980/org-markup) parse posts, [html-markdown](https://github.com/egao1980/html-markdown) and [html-protocol](https://github.com/egao1980/html-protocol) render them, [highlight-protocol](https://github.com/egao1980/highlight-protocol) colours their code, and [engels](https://github.com/egao1980/engels) plus `theme/brutal.lass` (through [css-backend-lass](https://github.com/egao1980/css-backend-lass)) style them. Dependencies come from GHCR through `cl-repo`.
 
 ## Writing a post
 
@@ -42,7 +42,7 @@ Everything after the marker is left out of the index page.
 | `draft: true` | left out of the build unless `DRAFTS=1` |
 | `description` | the meta description; default: the first paragraph |
 
-Without a `<!--more-->` / `#+more` line, the index shows the whole post. URLs in a post are site-root relative: `![x](images/x.png)` is `static/images/x.png`. A link to another post's file (`[see](2026-11-23-other.md)`) goes to that post's page. `javascript:` and similar URLs are dropped.
+Without a `<!--more-->` / `#+more` line, the index shows the whole post. Code blocks with a language (```` ```lisp ````, `#+begin_src lisp`) are highlighted: Common Lisp, Emacs Lisp, Scheme, Python, shell, console, JSON, YAML and diff, in light and dark. Others, and blocks without a language, stay plain. URLs in a post are site-root relative: `![x](images/x.png)` is `static/images/x.png`. A link to another post's file (`[see](2026-11-23-other.md)`) goes to that post's page. `javascript:` and similar URLs are dropped.
 
 Full rules: the headers of [`src/post.lisp`](src/post.lisp) (posts), [`src/page.lisp`](src/page.lisp) (docs pages), [`src/theme.lisp`](src/theme.lisp) (URLs) and [`src/build.lisp`](src/build.lisp) (the files a site has).
 
@@ -74,7 +74,7 @@ nav:
 
 Every `.org`, `.md` and `.markdown` file directly in `pages-dir` is a page at `SLUG.html` (the file name without its extension; `slug` / `#+SLUG` overrides it). A page needs a title (`#+TITLE` / `title`). Org pages show `#+AUTHOR` unless `#+OPTIONS` has `author:nil`, `#+EMAIL` with `email:t`, and a table of contents with `toc:t` or `toc:N`; markdown pages use `author`, `email` and `toc: true` in front matter. Source blocks follow org-babel's `:exports` (`none` hides a helper block, `both` shows its `#+RESULTS:`). Pages link to each other by file name: `[[file:requests.org][Requests]]` goes to `requests.html`. Previous / Next and the page list follow the order the index page links the pages in.
 
-Another repo builds its site with cl-blog from GHCR: a `qlfile` with `ql cl-blog`, then `cl-repo run -- sbcl … --eval '(asdf:load-system "cl-blog")' --eval '(cl-blog:build-site)'` (python-to-cl's `bin/build` and `.github/workflows/site.yml`).
+Another repo builds its site with cl-blog from GHCR: an `.asd` with `:depends-on ("cl-blog")` (a qlfile alone does not install cl-blog's dependencies, egao1980/cl-repository#170), then `cl-repo run -- sbcl … --eval '(asdf:load-system "cl-blog")' --eval '(cl-blog:build-site)'` (python-to-cl's `bin/build` and `.github/workflows/site.yml`).
 
 ## Publishing
 

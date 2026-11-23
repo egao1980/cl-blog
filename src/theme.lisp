@@ -68,6 +68,33 @@ header). SOURCES: source file name → its page's site-relative path."
     (let ((safe (hm:safe-url url kind)))
       (and safe (%resolve-content-url safe sources)))))
 
+(defun %code-language (class)
+  "LANG of the first language-LANG word in the CLASS attribute, else NIL."
+  (let ((word (find-if (lambda (w) (and (> (length w) 9) (string= "language-" w :end2 9)))
+                       (uiop:split-string (or class "") :separator '(#\Space #\Tab)))))
+    (and word (subseq word 9))))
+
+(defun %highlight-node (node)
+  "Highlight the code blocks in NODE (an html-protocol node), in place."
+  (when (html:html-element-p node)
+    (if (string-equal (html:html-element-name node) "pre")
+        (dolist (code (html:html-element-children node))
+          (let ((language (and (html:html-element-p code)
+                               (string-equal (html:html-element-name code) "code")
+                               (%code-language (html:element-attr code "class")))))
+            (when language
+              (setf (html:html-element-children code)
+                    (hl:highlight-nodes (html:element-text code) language)))))
+        (mapc #'%highlight-node (html:html-element-children node)))))
+
+(defun render-content (blocks &rest keys &key heading-offset heading-ids url)
+  "BLOCKS (markdown-protocol) as html-protocol nodes with highlighted code:
+html-markdown's RENDER-MARKDOWN with KEYS, then the code blocks' spans."
+  (declare (ignore heading-offset heading-ids url))
+  (let ((nodes (apply #'hm:render-markdown blocks keys)))
+    (mapc #'%highlight-node nodes)
+    nodes))
+
 ;;; Elements
 
 (defun %nodes (children)
@@ -172,7 +199,7 @@ site-root relative."
                       (when (post-tags post)
                         (list "Tagged as " (%tag-links (post-tags post)) ". "))
                       "Written on " (%time post) "."))
-              (hm:render-markdown (post-blocks post) :heading-offset 1 :heading-ids t
+              (render-content (post-blocks post) :heading-offset 1 :heading-ids t
                                                      :url (content-url-fn sources))
               (when (or older newer)
                 (el "footer" nil
@@ -245,7 +272,7 @@ headings from page level 1 (h2) to DEPTH (hDEPTH+1), in a <nav>."
   "PAGE's file (a docs site); PREVIOUS / NEXT are its neighbours in PAGES (or
 NIL)."
   (let* ((*page-path* (page-url page))
-         (body (hm:render-markdown (page-blocks page) :heading-offset 1 :heading-ids t
+         (body (render-content (page-blocks page) :heading-offset 1 :heading-ids t
                                                       :url (content-url-fn sources))))
     (page site
           (list
@@ -273,7 +300,7 @@ NIL)."
       (el "header" nil
           (el "h2" nil (%a (rel (post-url post)) (post-title post)))
           (el "p" nil "Posted on " (%time post) "."))
-      (hm:render-markdown (post-excerpt post) :heading-offset 2 :url (content-url-fn sources))
+      (render-content (post-excerpt post) :heading-offset 2 :url (content-url-fn sources))
       (when (post-more-p post)
         (el "footer" nil (el "nav" nil (%a (rel (post-url post)) "Continue reading"))))))
 
@@ -327,11 +354,13 @@ near-black links instead of engels' blue, and the old grey code background."
                       :toggle-attribute "data-theme"))
 
 (defun site-stylesheet (&optional documents)
-  "engels, the blog colours and theme/brutal.lass as one css-protocol
+  "engels, the blog colours, highlight-protocol's code colours (light and
+dark, the same data-theme toggle) and theme/brutal.lass as one css-protocol
 stylesheet; pruned to the rules DOCUMENTS (html-documents) can use."
   (let ((sheet (css:merge-stylesheets
                 (engels:stylesheet)
                 (css:css-theme-stylesheet (blog-theme))
+                (hl:highlight-stylesheet :toggle-attribute "data-theme")
                 (css-backend-lass:compile-lass-file
                  (asdf:system-relative-pathname "cl-blog" "theme/brutal.lass")))))
     (if documents
