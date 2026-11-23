@@ -4,6 +4,14 @@
 
 (* :margin 0)
 
+;; The brutal theme's type scale (engels' Marx scale is one step larger).
+(h1 :font-size 32px)
+(h2 :font-size 28px)
+(h3 :font-size 24px)
+(h4 :font-size 20px)
+(h5 :font-size 18px)
+(h6 :font-size 16px)
+
 ((:or header footer)
  :padding 0
  :border none)
@@ -32,6 +40,12 @@
  :background "var(--blog-band)")
 
 (a :display inline-block)
+
+;; sanitize.css 13 resets nav lists inside :where() (no specificity), so
+;; engels' ul padding wins over it; the old site (sanitize 11) had none.
+((nav ul)
+ :padding 0
+ :margin 0)
 
 ((nav a)
  :width 100%
@@ -85,6 +99,7 @@
  :overflow-x auto)
 
 (code
+ :background "var(--engels-code-bg)"
  :word-break normal
  :overflow-wrap anywhere)
 

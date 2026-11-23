@@ -211,11 +211,17 @@ site-relative paths of the neighbouring pages, or NIL."
 ;;; The stylesheet
 
 (defun blog-theme ()
-  "The --blog-* colours of theme/brutal.lass, light and dark."
+  "The --blog-* colours of theme/brutal.lass, light and dark, plus the
+brutal theme's own engels palette (it came after engels' theme, so it wins):
+near-black links instead of engels' blue, and the old grey code background."
   (css:make-css-theme :light '(("blog-band" . "#f8f8f8") ("blog-ink" . "#000")
-                               ("blog-paper" . "#fff"))
+                               ("blog-paper" . "#fff")
+                               ("engels-link" . "#101010") ("engels-link-hover" . "#000")
+                               ("engels-code-bg" . "#f3f3f3"))
                       :dark '(("blog-band" . "#262a31") ("blog-ink" . "#f3f3f3")
-                              ("blog-paper" . "#16181d"))
+                              ("blog-paper" . "#16181d")
+                              ("engels-link" . "#e6e6e6") ("engels-link-hover" . "#fff")
+                              ("engels-code-bg" . "#262a31"))
                       :toggle-attribute "data-theme"))
 
 (defun site-stylesheet (&optional documents)
