@@ -78,6 +78,19 @@
  :max-width 100%
  :height auto)
 
+;; Code keeps its lines: engels (Marx) wraps pre and breaks code anywhere,
+;; which splits Lisp symbols. Blocks scroll instead.
+(pre
+ :white-space pre
+ :overflow-x auto)
+
+(code
+ :word-break normal
+ :overflow-wrap anywhere)
+
+((pre code)
+ :overflow-wrap normal)
+
 (:media "(max-width: 600px)"
  ((body > header)
   :grid-template-columns 1fr)

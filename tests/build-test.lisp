@@ -46,7 +46,7 @@
       (ok (has "<link rel=\"canonical\" href=\"https://example.org/blog/\">" index))
       (ok (has "An org note" index))
       (ok (has "Newer &lt;post&gt;" index) "titles escaped")
-      (ng (has "Older post" index) "page 1 holds the newest two")
+      (ng (has "posts/older.html" index) "page 1 holds the newest two")
       (ok (has "href=\"2.html\">Older posts" index))
       (ok (has "href=\"index.html\">Newer posts" (out "2.html")))
       (ok (has "Continue reading" (out "2.html")) "an excerpt with <!--more-->")
