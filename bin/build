@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Build the site into _site/. cl-repo installs the dependencies from GHCR.
+# DRAFTS=1 bin/build includes draft posts. Preview: open _site/index.html.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+drafts=""
+[[ -n "${DRAFTS:-}" ]] && drafts=" :drafts t"
+exec cl-repo run -- sbcl --non-interactive --no-userinit --eval '(require "asdf")' \
+  --eval '(asdf:load-system "cl-blog")' \
+  --eval "(uiop:quit (if (cl-blog:build-site${drafts}) 0 1))"

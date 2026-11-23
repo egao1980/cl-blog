@@ -1,0 +1,22 @@
+---
+title: "Minimal Lisp setup using lem"
+date: 2020-04-14 15:07:43
+tags: [tips, linux, roswell, lem, qlot, cl-project, slime]
+slug: Minimal-Lisp-setup-using-lem
+---
+
+This is a set of instructions to quickly setup Common Lisp development environment on Linux using [Lem editor](https://github.com/cxxxr/lem)
+
+1. Install `roswell`, see [instructions](https://github.com/roswell/roswell#installation-dependency--usage)
+2. ```ros install fukamachi/qlot```
+3. ```ros install fukamachi/cl-project```
+4. ```ros intall cxxxr/lem```
+5. Modify .bashrc / .profile to include ```export PATH="$PATH:$HOME/.roswell/bin"```
+6. Create project using ```make-project``` following the example provided
+7. Start ```lem```
+8. Open file `<project>/qlfile` and add dependencies
+9. `M-x change-directory` to `<project>`
+10. `C-u M-x slime`  -> type 'qlot/' and Tab to select CL implementation
+11. ```(ql:quickload :<project>)```
+12. **PROFIT**
+

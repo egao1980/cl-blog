@@ -1,0 +1,19 @@
+# The site. Posts are posts/*.md (YAML front matter) and posts/*.org
+# (#+TITLE / #+DATE / #+FILETAGS); static/ is copied as is. See README.md.
+title: All things Common Lisp
+description: Blog about all things Lisp
+author: Nikolai Matiushev
+domain: https://egao1980.github.io/cl-blog
+language: en
+per-page: 10
+# Extra per-tag feeds: tag/<tag>-rss.xml and tag/<tag>-atom.xml.
+feeds: [lisp]
+nav:
+  - {name: Home, url: "http://github.com/egao1980"}
+  - {name: Linkedin, url: "https://www.linkedin.com/in/nikolai-matiushev-1958655"}
+  - {name: Twitter, url: "http://twitter.com/NickMatyushev"}
+  - {name: Code, url: "http://github.com/egao1980/cl-blog"}
+license:
+  name: Creative Commons License
+  url: "http://creativecommons.org/licenses/by-sa/3.0/deed.en_US"
+  image: css/cc-by-sa.png
