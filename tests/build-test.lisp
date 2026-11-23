@@ -88,7 +88,10 @@
       (ok (has "<loc>https://example.org/blog/posts/newer.html</loc>" sitemap))
       (ok (has "<loc>https://example.org/blog/</loc>" sitemap))
       (ok (has "--blog-band" css) "the blog colours")
-      (ok (has "--engels-" css) "engels underneath"))))
+      (ok (has "--engels-" css) "engels underneath")
+      (ok (> (search "--engels-link:#101010" css) (search "--engels-link:" css))
+          "the brutal palette's near-black links come after engels' blue, so they win")
+      (ok (has "h1{font-size:32px" css) "the brutal type scale"))))
 
 (defun count-matches (needle haystack)
   (loop with start = 0
