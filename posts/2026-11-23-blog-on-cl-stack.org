@@ -1,0 +1,35 @@
+#+TITLE: The blog now builds on the cl-stack
+#+DATE: <2026-11-23 Mon 16:45>
+#+FILETAGS: :lisp:coleslaw:website:org:cl-stack:
+
+This blog used to be built with Coleslaw on a Windows box. The generated HTML went into =docs/=, got copied around with =robocopy= and was committed for GitHub Pages to serve. It worked, but every note meant a Lisp image with the right Quicklisp dists, a manual build and a big generated diff, so the blog sat untouched since 2020.
+
+It now builds with a small generator that lives in [[https://github.com/egao1980/cl-blog][the blog repo]] itself. It runs on the [[https://github.com/egao1980/cl-stack][cl-stack]], the set of protocol and backend libraries I've been working on, and it deploys from GitHub Actions.
+
+#+more
+
+* The pipeline
+- Posts are Markdown (with YAML front matter) or Org. [[https://github.com/egao1980/markdown-protocol][markdown-protocol]] and the new [[https://github.com/egao1980/org-markup][org-markup]] parse them into one plain-list AST.
+- The new [[https://github.com/egao1980/html-markdown][html-markdown]] renders that AST as [[https://github.com/egao1980/html-protocol][html-protocol]] nodes. Pages are html-protocol trees too.
+- The brutal theme from [[2020-04-14-coleslaw-with-lass.md][the LASS post]] is now LASS on top of [[https://github.com/egao1980/engels][engels]]. [[https://github.com/egao1980/css-backend-lass][css-backend-lass]] compiles it and prunes it to the rules the pages use, and it has a dark mode now.
+- The generator also writes RSS, Atom and a sitemap. Every old URL still works.
+
+Dependencies come from GHCR through [[https://github.com/egao1980/cl-repository][cl-repo]], so a local build is one command:
+
+#+BEGIN_SRC sh
+bin/build   # cl-repo run -- sbcl ... (cl-blog:build-site) → _site/
+#+END_SRC
+
+* Org posts
+This post is written in Org. Its header is ordinary Org keywords:
+
+#+BEGIN_SRC org
+,#+TITLE: The blog now builds on the cl-stack
+,#+DATE: <2026-11-23 Mon 16:45>
+,#+FILETAGS: :lisp:coleslaw:website:org:cl-stack:
+#+END_SRC
+
+org-markup covers what notes use: headings (=:noexport:= subtrees are dropped), emphasis, links and images, lists, tables, and src, example and quote blocks. It produces the same AST as Markdown, so neither the HTML renderer nor the terminal one cares which syntax I wrote in.
+
+* Publishing
+GitHub Actions tests the generator, builds the site and deploys =master= to Pages. New posts arrive as pull requests that merge when the build is green. The last piece is a [[https://github.com/egao1980/lisp-workspace/blob/main/skills/blog/SKILL.md][Claude Code skill]]: =/blog= turns a note or a conversation into a post, opens the PR and merges it once the site builds. This post is the first one published that way.
